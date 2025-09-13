@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordle Group Statistics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px;
+        }
+
+        .plot-button {
+            background: linear-gradient(135deg, #4488FF, #6699FF);
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(68, 136, 255, 0.3);
+        }
+
+        .plot-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(68, 136, 255, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+        .time-toggle {
+            display: flex;
+            justify-content: center;
+            margin: 20px;
+            background: #f8f9fa;
+            border-radius: 25px;
+            padding: 5px;
+        }
+
+        .time-toggle button {
+            flex: 1;
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .time-toggle button.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .ranking-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .ranking-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .card-header h3 {
+            font-size: 1.3em;
+            margin-bottom: 5px;
+        }
+
+        .card-header .subtitle {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .ranking-list {
+            padding: 0;
+        }
+
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.3s ease;
+        }
+
+        .ranking-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .ranking-item:last-child {
+            border-bottom: none;
+        }
+
+        .rank-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 0.9em;
+        }
+
+        .rank-1 { background: #ffd700; color: #333; }
+        .rank-2 { background: #c0c0c0; color: #333; }
+        .rank-3 { background: #cd7f32; color: white; }
+        .rank-other { background: #e9ecef; color: #666; }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .username {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .stat-value {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .metric-value {
+            font-weight: bold;
+            color: #667eea;
+            margin-left: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .error {
+            text-align: center;
+            padding: 40px;
+            color: #e74c3c;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .podium-section {
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            text-align: center;
+            color: white;
+        }
+
+        .podium-title {
+            font-size: 2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .podium-subtitle {
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .podium-container {
+            display: flex;
+            justify-content: center;
+            align-items: end;
+            gap: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .podium-place {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 120px;
+        }
+
+        .podium-user {
+            background: white;
+            color: #333;
+            padding: 15px 10px;
+            border-radius: 15px 15px 0 0;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.2);
+            margin-bottom: 5px;
+            width: 100%;
+            position: relative;
+        }
+
+        .podium-username {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            word-wrap: break-word;
+        }
+
+        .podium-score {
+            font-size: 1.3em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .podium-rank {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+        }
+
+        .podium-base {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #333;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .podium-place:nth-child(1) .podium-base {
+            height: 80px;
+            background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
+        }
+
+        .podium-place:nth-child(1) .podium-rank {
+            background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
+            color: #333;
+        }
+
+        .podium-place:nth-child(2) .podium-base {
+            height: 120px;
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+        }
+
+        .podium-place:nth-child(2) .podium-rank {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #333;
+        }
+
+        .podium-place:nth-child(3) .podium-base {
+            height: 60px;
+            background: linear-gradient(135deg, #cd7f32, #d4943a);
+        }
+
+        .podium-place:nth-child(3) .podium-rank {
+            background: linear-gradient(135deg, #cd7f32, #d4943a);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                padding: 10px;
+            }
+
+            .podium-container {
+                gap: 5px;
+            }
+
+            .podium-place {
+                min-width: 100px;
+            }
+
+            .podium-user {
+                padding: 10px 5px;
+            }
+
+            .podium-username {
+                font-size: 0.9em;
+            }
+
+            .podium-score {
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Wordle Group Statistics</h1>
+            <p>Track your group's performance and see who's dominating the word game!</p>
+        </div>
+        
+        <div class="nav-buttons">
+            <a href="/plot" class="plot-button">📊 Interactive Progress Plot</a>
+            <a href="/video" class="plot-button" style="background: linear-gradient(135deg, #ff6b6b, #ee5a24);">🎬 Progress Video</a>
+        </div>
+
+        <div class="time-toggle">
+            <button id="allTimeBtn" class="active" onclick="showAllTime()">All Time</button>
+            <button id="lastWeekBtn" onclick="showLastWeek()">Last 7 Days</button>
+        </div>
+
+        <div id="podiumSection" style="display: none;">
+            <!-- Podium will be rendered here -->
+        </div>
+
+        <div id="statsContainer" class="stats-grid">
+            <div class="loading">Loading statistics...</div>
+        </div>
+    </div>
+
+    <script>
+        let currentView = 'all-time';
+        let allTimeData = null;
+        let lastWeekData = null;
+
+        function showAllTime() {
+            document.getElementById('allTimeBtn').classList.add('active');
+            document.getElementById('lastWeekBtn').classList.remove('active');
+            currentView = 'all-time';
+            if (allTimeData) {
+                renderStats(allTimeData);
+            } else {
+                loadStats();
+            }
+        }
+
+        function showLastWeek() {
+            document.getElementById('lastWeekBtn').classList.add('active');
+            document.getElementById('allTimeBtn').classList.remove('active');
+            currentView = 'last-week';
+            if (lastWeekData) {
+                renderStats(lastWeekData);
+            } else {
+                loadStats();
+            }
+        }
+
+        async function loadStats() {
+            const container = document.getElementById('statsContainer');
+            container.innerHTML = '<div class="loading">Loading statistics...</div>';
+
+            try {
+                const endpoint = currentView === 'all-time' ? '/api/stats/all-time' : '/api/stats/last-week';
+                const response = await fetch(endpoint);
+                const data = await response.json();
+
+                if (currentView === 'all-time') {
+                    allTimeData = data;
+                } else {
+                    lastWeekData = data;
+                }
+
+                renderStats(data);
+            } catch (error) {
+                container.innerHTML = '<div class="error">Failed to load statistics. Please try again.</div>';
+            }
+        }
+
+        function renderStats(data) {
+            const container = document.getElementById('statsContainer');
+            const podiumSection = document.getElementById('podiumSection');
+            
+            if (!data.rankings || Object.keys(data.rankings).length === 0) {
+                container.innerHTML = '<div class="no-data">No data available for this time period.</div>';
+                podiumSection.style.display = 'none';
+                return;
+            }
+
+            // Render podium for average score (most important metric)
+            renderPodium(data.rankings.average_score || []);
+            podiumSection.style.display = 'block';
+
+            const cards = [
+                {
+                    title: 'Average Score',
+                    subtitle: 'Lower is better (X counts as 7)',
+                    ranking: data.rankings.average_score || [],
+                    valueKey: 'average_score',
+                    formatter: (val) => val.toFixed(2)
+                },
+                {
+                    title: 'Most Participative',
+                    subtitle: 'Total days participated',
+                    ranking: data.rankings.participation || [],
+                    valueKey: 'days_participated',
+                    formatter: (val) => `${val} days`
+                },
+                {
+                    title: 'Score Consistency',
+                    subtitle: 'Lower variance is better',
+                    ranking: data.rankings.score_consistency || [],
+                    valueKey: 'score_variance',
+                    formatter: (val) => val.toFixed(2)
+                },
+                {
+                    title: 'Streak Consistency',
+                    subtitle: 'Most consistent streaks',
+                    ranking: data.rankings.streak_consistency || [],
+                    valueKey: 'consistency_score',
+                    formatter: (val) => (val * 100).toFixed(1) + '%'
+                },
+                {
+                    title: 'Longest Streak',
+                    subtitle: 'Consecutive days played',
+                    ranking: data.rankings.longest_streak || [],
+                    valueKey: 'longest_streak',
+                    formatter: (val) => `${val} days`
+                }
+            ];
+
+            let html = '';
+            cards.forEach(card => {
+                if (card.ranking.length > 0) {
+                    html += createRankingCard(card);
+                }
+            });
+
+            container.innerHTML = html;
+        }
+
+        function renderPodium(averageScoreRanking) {
+            const podiumSection = document.getElementById('podiumSection');
+            
+            if (!averageScoreRanking || averageScoreRanking.length < 3) {
+                podiumSection.style.display = 'none';
+                return;
+            }
+
+            const timeTitle = currentView === 'all-time' ? 'All Time' : 'Last 7 Days';
+            
+            // Get top 3 (arranged as 2nd, 1st, 3rd for podium effect)
+            const top3 = averageScoreRanking.slice(0, 3);
+            const podiumOrder = [top3[1], top3[0], top3[2]]; // 2nd, 1st, 3rd
+            const ranks = [2, 1, 3];
+
+            let html = `
+                <div class="podium-section">
+                    <h2 class="podium-title">🏆 ${timeTitle} Champions</h2>
+                    <p class="podium-subtitle">Top 3 Players by Average Score</p>
+                    <div class="podium-container">
+            `;
+
+            podiumOrder.forEach((player, index) => {
+                if (player) {
+                    const [username, stats] = player;
+                    const rank = ranks[index];
+                    html += `
+                        <div class="podium-place">
+                            <div class="podium-user">
+                                <div class="podium-rank">${rank}</div>
+                                <div class="podium-username">${username}</div>
+                                <div class="podium-score">${stats.average_score.toFixed(2)}</div>
+                            </div>
+                            <div class="podium-base">${rank === 1 ? '🥇' : rank === 2 ? '🥈' : '🥉'}</div>
+                        </div>
+                    `;
+                }
+            });
+
+            html += `
+                    </div>
+                </div>
+            `;
+
+            podiumSection.innerHTML = html;
+        }
+
+        function createRankingCard(card) {
+            let html = `
+                <div class="ranking-card">
+                    <div class="card-header">
+                        <h3>${card.title}</h3>
+                        <div class="subtitle">${card.subtitle}</div>
+                    </div>
+                    <div class="ranking-list">
+            `;
+
+            card.ranking.slice(0, 10).forEach(([username, stats], index) => {
+                const rank = index + 1;
+                const rankClass = rank <= 3 ? `rank-${rank}` : 'rank-other';
+                const value = stats[card.valueKey];
+                const formattedValue = card.formatter(value);
+
+                html += `
+                    <div class="ranking-item">
+                        <div class="rank-number ${rankClass}">${rank}</div>
+                        <div class="user-info">
+                            <div class="username">${username}</div>
+                            <div class="stat-value">
+                                ${stats.games_played} games
+                                <span class="metric-value">${formattedValue}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                    </div>
+                </div>
+            `;
+
+            return html;
+        }
+
+        // Load initial data
+        loadStats();
+    </script>
+</body>
+</html>
