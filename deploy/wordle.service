@@ -1,0 +1,35 @@
+[Unit]
+Description=Wordle Stats Web Application
+Documentation=https://github.com/yourusername/wordle-web
+After=network.target
+
+[Service]
+Type=simple
+User=wordle
+Group=wordle
+WorkingDirectory=/path/to/wordle-web
+ExecStart=/usr/bin/node server/index.js
+Restart=on-failure
+RestartSec=10
+
+# Environment variables
+Environment=NODE_ENV=production
+EnvironmentFile=/path/to/wordle-web/.env
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=wordle-web
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+
+# Resource limits
+LimitNOFILE=65536
+MemoryLimit=1G
+
+[Install]
+WantedBy=multi-user.target
+
+

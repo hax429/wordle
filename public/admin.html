@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Console - Wordle Stats</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <h1>🔒 Admin Console</h1>
+                <p>Enter your password to continue</p>
+            </div>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        class="form-input" 
+                        required 
+                        autofocus
+                        placeholder="Enter admin password"
+                    >
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">
+                    Login
+                </button>
+                <div id="loginError" class="error-message" style="display: none;"></div>
+            </form>
+            <div class="login-footer">
+                <a href="/" class="link">← Back to Public View</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" style="display: none;">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="header-content">
+                    <h1 class="header-title">
+                        <span class="icon">🔒</span>
+                        Admin Console
+                    </h1>
+                    <p class="header-subtitle">Manage your Wordle statistics</p>
+                </div>
+                <div class="header-actions">
+                    <a href="/" class="btn btn-secondary">
+                        <span>👁️</span> Public View
+                    </a>
+                    <button id="logoutBtn" class="btn btn-danger">
+                        <span>🚪</span> Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <div class="container">
+                <div class="admin-container">
+                    <!-- Database Overview -->
+                    <div class="admin-section">
+                        <h2 class="admin-section-title">📊 Database Overview</h2>
+                        <div id="databaseInfo"></div>
+                    </div>
+
+                    <!-- Import Data -->
+                    <div class="admin-section">
+                        <h2 class="admin-section-title">📥 Import Data</h2>
+                        <form id="importForm">
+                            <div class="form-group">
+                                <label class="form-label" for="messageInput">
+                                    Paste Wordle streak message:
+                                </label>
+                                <textarea 
+                                    id="messageInput" 
+                                    class="form-textarea"
+                                    placeholder="100 day streak&#10;👑 1/6: @user1&#10;2/6: @user2 @user3"
+                                    required
+                                ></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                Import Data
+                            </button>
+                        </form>
+                        <div id="importResult" style="margin-top: 1rem;"></div>
+                    </div>
+
+                    <!-- Manage Days -->
+                    <div class="admin-section">
+                        <h2 class="admin-section-title">📅 Manage Days</h2>
+                        <div id="daysList"></div>
+                    </div>
+
+                    <!-- Generate Video -->
+                    <div class="admin-section">
+                        <h2 class="admin-section-title">🎬 Generate Video</h2>
+                        <form id="videoForm">
+                            <div class="form-group">
+                                <label class="form-label">Video Type:</label>
+                                <select id="videoType" class="form-select">
+                                    <option value="2d">Modern 2D Animation (Recommended)</option>
+                                    <option value="3d">Modern 3D Animation</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="videoFilename">
+                                    Filename (optional):
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="videoFilename" 
+                                    class="form-input"
+                                    placeholder="Leave empty for auto-generated name"
+                                >
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                Generate Video
+                            </button>
+                        </form>
+                        <div id="videoResult" style="margin-top: 1rem;"></div>
+                    </div>
+
+                    <!-- Database Actions -->
+                    <div class="admin-section">
+                        <h2 class="admin-section-title">🛠️ Database Actions</h2>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <button id="backupBtn" class="btn btn-secondary">
+                                <span>💾</span> Download Backup
+                            </button>
+                            <button id="clearDbBtn" class="btn btn-danger">
+                                <span>🗑️</span> Clear Database
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; 2024 Wordle Stats Admin Console</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="spinner-overlay" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="successToast" class="toast toast-success" style="display: none;">
+        <span id="successMessage"></span>
+    </div>
+
+    <div id="errorToast" class="toast toast-error" style="display: none;">
+        <span id="errorMessage"></span>
+    </div>
+
+    <style>
+        .login-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .login-container {
+            background: var(--bg-card);
+            padding: 3rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-xl);
+            width: 100%;
+            max-width: 400px;
+            margin: 1rem;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-form {
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        .error-message {
+            color: var(--error-color);
+            padding: 0.75rem;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: var(--border-radius);
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .success-message {
+            color: var(--success-color);
+            padding: 0.75rem;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: var(--border-radius);
+            margin-top: 1rem;
+        }
+
+        .login-footer {
+            text-align: center;
+        }
+
+        .link {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .link:hover {
+            text-decoration: underline;
+        }
+
+        .day-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            margin-bottom: 0.5rem;
+        }
+
+        .day-item:hover {
+            background: var(--bg-primary);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .info-value {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+    </style>
+
+    <script src="/js/admin.js"></script>
+</body>
+</html>
+
+

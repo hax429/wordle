@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordle Group Statistics</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="header-title">
+                    <span class="icon">🎯</span>
+                    Wordle Group Statistics
+                </h1>
+                <p class="header-subtitle">Track your group's performance and see who's dominating!</p>
+            </div>
+            <div class="header-actions">
+                <button id="refreshBtn" class="btn btn-secondary">
+                    <span>🔄</span> Refresh
+                </button>
+                <a href="/admin" class="btn btn-primary">
+                    <span>🔒</span> Admin
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Database Overview -->
+            <section class="section" id="overviewSection">
+                <div class="section-header">
+                    <h2 class="section-title">📊 Overview</h2>
+                </div>
+                <div class="stats-grid" id="overviewStats">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Time Period Selector -->
+            <section class="section">
+                <div class="time-period-selector">
+                    <button class="period-btn active" data-period="all-time">
+                        🏆 All Time Champions
+                    </button>
+                    <button class="period-btn" data-period="last-week">
+                        📅 Last 7 Days
+                    </button>
+                </div>
+            </section>
+
+            <!-- Rankings -->
+            <section class="section" id="rankingsSection">
+                <div class="section-header">
+                    <h2 class="section-title">🏅 Rankings</h2>
+                </div>
+                <div class="rankings-grid" id="rankingsContainer">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Interactive Chart -->
+            <section class="section">
+                <div class="section-header">
+                    <h2 class="section-title">📈 Progress Over Time</h2>
+                    <p class="section-subtitle">Interactive chart showing daily scores (lower is better)</p>
+                </div>
+                <div class="chart-container">
+                    <div id="progressChart"></div>
+                </div>
+            </section>
+
+            <!-- Video Player -->
+            <section class="section" id="videoSection">
+                <div class="section-header">
+                    <h2 class="section-title">🎬 Progress Video</h2>
+                    <p class="section-subtitle">Animated visualization of your Wordle journey</p>
+                </div>
+                <div class="video-container" id="videoContainer">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Wordle Stats | <a href="/admin">Admin Console</a></p>
+        </div>
+    </footer>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="spinner-overlay" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Error Toast -->
+    <div id="errorToast" class="toast toast-error" style="display: none;">
+        <span id="errorMessage"></span>
+    </div>
+
+    <script src="/js/charts.js"></script>
+    <script src="/js/guest.js"></script>
+</body>
+</html>
+
+
