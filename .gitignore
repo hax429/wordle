@@ -18,8 +18,7 @@ data/*.db-wal
 backups/
 
 # Videos
-videos/*.mp4
-videos/*.gif
+videos/
 
 # Logs
 logs/

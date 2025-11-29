@@ -96,12 +96,14 @@ class WordleDatabase {
         const totalStreaks = this.db.prepare('SELECT COUNT(*) as count FROM streaks').get().count;
         const totalUsers = this.db.prepare('SELECT COUNT(*) as count FROM users').get().count;
         const totalEntries = this.db.prepare('SELECT COUNT(*) as count FROM results').get().count;
+        const totalGuesses = this.db.prepare("SELECT SUM(CASE WHEN score IN ('1','2','3','4','5','6') THEN CAST(score AS INTEGER) ELSE 0 END) as total FROM results").get().total || 0;
         const users = this.db.prepare('SELECT username FROM users ORDER BY username').all().map(u => u.username);
 
         return {
             total_streaks: totalStreaks,
             total_users: totalUsers,
             total_entries: totalEntries,
+            total_guesses: totalGuesses,
             users: users
         };
     }

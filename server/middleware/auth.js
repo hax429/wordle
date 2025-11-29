@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'change-this-secret-in-production';
+const JWT_SECRET = process.env.JWT_SECRET || 'discordwordle_secret';
 const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH;
 
 // Middleware to verify JWT token

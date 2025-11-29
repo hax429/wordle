@@ -1,86 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wordle Group Statistics</title>
+    <title>WORDLE STATS → Daily Word Champions</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
+
 <body>
-    <!-- Header -->
+    <!-- Letter Tile Background -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Confetti Canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Newspaper-style Header Banner -->
     <header class="header">
+        <div class="header-banner">
+            <div class="banner-decoration">★ ★ ★</div>
+            <div></div>
+            <div class="edition-info">DAILY EDITION • EST. 2024</div>
+        </div>
         <div class="container">
-            <div class="header-content">
+            <div class="header-masthead">
                 <h1 class="header-title">
-                    <span class="icon">🎯</span>
-                    Wordle Group Statistics
+                    <span class="title-main">THE WORDLE CHRONICLE</span>
                 </h1>
-                <p class="header-subtitle">Track your group's performance and see who's dominating!</p>
+                <div class="header-tagline">Five Letters. Six Tries. Infinite Glory.</div>
             </div>
-            <div class="header-actions">
-                <button id="refreshBtn" class="btn btn-secondary">
-                    <span>🔄</span> Refresh
+            <div class="header-controls">
+                <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                    🌙
                 </button>
-                <a href="/admin" class="btn btn-primary">
-                    <span>🔒</span> Admin
+                <button id="refreshBtn" class="control-btn refresh-btn">
+                    <span class="btn-icon">↻</span>
+                    <span class="btn-text">REFRESH</span>
+                </button>
+                <a href="/admin" class="control-btn admin-btn">
+                    <span class="btn-icon">⚙</span>
+                    <span class="btn-text">ADMIN</span>
                 </a>
             </div>
         </div>
+        <div class="header-divider"></div>
     </header>
 
     <!-- Main Content -->
     <main class="main">
         <div class="container">
-            <!-- Database Overview -->
-            <section class="section" id="overviewSection">
-                <div class="section-header">
-                    <h2 class="section-title">📊 Overview</h2>
+            <!-- Database Overview with Wordle Tiles -->
+            <section class="section section-overview" id="overviewSection">
+                <div class="section-header-alt">
+                    <span class="section-label">BREAKING NEWS</span>
+                    <h2 class="section-title-alt">BY THE NUMBERS</h2>
                 </div>
                 <div class="stats-grid" id="overviewStats">
                     <!-- Will be populated by JavaScript -->
                 </div>
             </section>
 
-            <!-- Time Period Selector -->
-            <section class="section">
+            <!-- Time Period Selector - Game Show Style -->
+            <section class="section section-period">
                 <div class="time-period-selector">
+                    <div class="period-label">LEADERBOARD MODE:</div>
                     <button class="period-btn active" data-period="all-time">
-                        🏆 All Time Champions
+                        <span class="period-icon">∞</span>
+                        <span class="period-text">ALL-TIME LEGENDS</span>
                     </button>
                     <button class="period-btn" data-period="last-week">
-                        📅 Last 7 Days
+                        <span class="period-icon">7</span>
+                        <span class="period-text">LAST 7 DAYS</span>
                     </button>
                 </div>
             </section>
 
-            <!-- Rankings -->
-            <section class="section" id="rankingsSection">
-                <div class="section-header">
-                    <h2 class="section-title">🏅 Rankings</h2>
+            <!-- Hall of Fame - Newspaper Column Style -->
+            <section class="section section-facts" id="factsSection">
+                <div class="section-header-column">
+                    <div class="column-marker">◆</div>
+                    <h2 class="section-title-column">HALL OF FAME</h2>
+                    <div class="column-subtitle">Legendary Moments in Wordplay</div>
+                </div>
+                <div class="facts-grid" id="factsContainer">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Rankings - Scoreboard Style -->
+            <section class="section section-rankings" id="rankingsSection">
+                <div class="section-header-scoreboard">
+                    <div class="scoreboard-flash">LIVE</div>
+                    <h2 class="section-title-scoreboard">THE SCOREBOARD</h2>
                 </div>
                 <div class="rankings-grid" id="rankingsContainer">
                     <!-- Will be populated by JavaScript -->
                 </div>
             </section>
 
-            <!-- Interactive Chart -->
-            <section class="section">
-                <div class="section-header">
-                    <h2 class="section-title">📈 Progress Over Time</h2>
-                    <p class="section-subtitle">Interactive chart showing daily scores (lower is better)</p>
+            <!-- Chart Section - Data Viz Style -->
+            <section class="section section-chart">
+                <div class="section-header-data">
+                    <div class="data-badge">DATA VISUALIZATION</div>
+                    <h2 class="section-title-data">PERFORMANCE TIMELINE</h2>
+                    <div class="data-note">Lower scores = Better performance • Interactive chart below</div>
                 </div>
                 <div class="chart-container">
                     <div id="progressChart"></div>
                 </div>
             </section>
 
-            <!-- Video Player -->
-            <section class="section" id="videoSection">
-                <div class="section-header">
-                    <h2 class="section-title">🎬 Progress Video</h2>
-                    <p class="section-subtitle">Animated visualization of your Wordle journey</p>
+            <!-- Video Archive -->
+            <section class="section section-video" id="videoSection">
+                <div class="section-header-video">
+                    <div class="video-badge">◀ MOTION PICTURE ▶</div>
+                    <h2 class="section-title-video">THE HIGHLIGHT REEL</h2>
+                    <div class="video-subtitle">Watch Your Journey Unfold Frame by Frame</div>
                 </div>
                 <div class="video-container" id="videoContainer">
                     <!-- Will be populated by JavaScript -->
@@ -89,16 +130,34 @@
         </div>
     </main>
 
-    <!-- Footer -->
+    <!-- Footer - Newspaper Style -->
     <footer class="footer">
+        <div class="footer-divider"></div>
         <div class="container">
-            <p>&copy; 2024 Wordle Stats | <a href="/admin">Admin Console</a></p>
+            <div class="footer-content">
+                <div class="footer-column">
+                    <div class="footer-title">THE WORDLE CHRONICLE</div>
+                    <div class="footer-tagline">All The Words Fit To Guess</div>
+                </div>
+                <div class="footer-column">
+                    <a href="/admin" class="footer-link">ADMIN OFFICE</a>
+                    <div class="footer-year">EST. 2024</div>
+                </div>
+            </div>
         </div>
     </footer>
 
     <!-- Loading Spinner -->
     <div id="loadingSpinner" class="spinner-overlay" style="display: none;">
-        <div class="spinner"></div>
+        <div class="wordle-loader">
+            <div class="wordle-tile-loader">L</div>
+            <div class="wordle-tile-loader">O</div>
+            <div class="wordle-tile-loader">A</div>
+            <div class="wordle-tile-loader">D</div>
+            <div class="wordle-tile-loader">I</div>
+            <div class="wordle-tile-loader">N</div>
+            <div class="wordle-tile-loader">G</div>
+        </div>
     </div>
 
     <!-- Error Toast -->
@@ -109,6 +168,5 @@
     <script src="/js/charts.js"></script>
     <script src="/js/guest.js"></script>
 </body>
+
 </html>
-
-
