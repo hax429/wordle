@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WORDLE STATS → Daily Word Champions</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+
+<body>
+    <!-- Letter Tile Background -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Confetti Canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Newspaper-style Header Banner -->
+    <header class="header">
+        <div class="header-banner">
+            <div class="banner-decoration">★ ★ ★</div>
+            <div></div>
+            <div class="edition-info">DAILY EDITION • EST. 2024</div>
+        </div>
+        <div class="container">
+            <div class="header-masthead">
+                <h1 class="header-title">
+                    <span class="title-main">THE WORDLE CHRONICLE</span>
+                </h1>
+                <div class="header-tagline">Five Letters. Six Tries. Infinite Glory.</div>
+            </div>
+            <div class="header-controls">
+
+                <button id="refreshBtn" class="control-btn refresh-btn">
+                    <span class="btn-icon">↻</span>
+                    <span class="btn-text">REFRESH</span>
+                </button>
+                <button id="tutorialBtn" class="control-btn tutorial-btn">
+                    <span class="btn-icon">?</span>
+                    <span class="btn-text">HELP</span>
+                </button>
+                <a href="/admin" class="control-btn admin-btn">
+                    <span class="btn-icon">⚙</span>
+                    <span class="btn-text">ADMIN</span>
+                </a>
+            </div>
+        </div>
+        <div class="header-divider"></div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Database Overview with Wordle Tiles -->
+            <section class="section section-overview" id="overviewSection">
+                <div class="section-header-alt">
+                    <span class="section-label">BREAKING NEWS</span>
+                    <h2 class="section-title-alt">BY THE NUMBERS</h2>
+                </div>
+                <div class="stats-grid" id="overviewStats">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Time Period Selector - Game Show Style -->
+            <section class="section section-period">
+                <div class="time-period-selector">
+                    <div class="period-label">LEADERBOARD MODE:</div>
+                    <button class="period-btn active" data-period="all-time">
+                        <span class="period-icon">∞</span>
+                        <span class="period-text">ALL-TIME LEGENDS</span>
+                    </button>
+                    <button class="period-btn" data-period="last-week">
+                        <span class="period-icon">7</span>
+                        <span class="period-text">LAST 7 DAYS</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Hall of Fame - Newspaper Column Style -->
+            <section class="section section-facts" id="factsSection">
+                <div class="section-header-column">
+                    <div class="column-marker">◆</div>
+                    <h2 class="section-title-column">HALL OF FAME</h2>
+                    <div class="column-subtitle">Legendary Moments in Wordplay</div>
+                </div>
+                <div class="facts-grid" id="factsContainer">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Rankings - Scoreboard Style -->
+            <section class="section section-rankings" id="rankingsSection">
+                <div class="section-header-scoreboard">
+                    <div class="scoreboard-flash">LIVE</div>
+                    <h2 class="section-title-scoreboard">THE SCOREBOARD</h2>
+                </div>
+                <div class="rankings-grid" id="rankingsContainer">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Chart Section - Data Viz Style -->
+            <section class="section section-chart" id="chartSection">
+                <div class="section-header-data">
+                    <div class="data-badge">DATA VISUALIZATION</div>
+                </div>
+                <section class="chart-section">
+                    <h2 class="section-title-data">PERFORMANCE TIMELINE</h2>
+                    <p class="section-subtitle">Lower scores = Better performance • Interactive chart below</p>
+
+                    <div class="chart-controls">
+                        <div class="btn-group">
+                            <button class="btn btn-sm active" id="btnLineChart">Line Chart</button>
+                            <button class="btn btn-sm" id="btnHeatmap">Heatmap</button>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <div id="progressChart"></div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Video Archive -->
+            <section class="section section-video" id="videoSection">
+                <div class="section-header-video">
+                    <div class="video-badge">◀ MOTION PICTURE ▶</div>
+                    <h2 class="section-title-video">THE HIGHLIGHT REEL</h2>
+                    <div class="video-subtitle">Watch Your Journey Unfold Frame by Frame</div>
+                </div>
+                <div class="video-container" id="videoContainer">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer - Newspaper Style -->
+    <footer class="footer">
+        <div class="footer-divider"></div>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <div class="footer-title">THE WORDLE CHRONICLE</div>
+                    <div class="footer-tagline">All The Words Fit To Guess</div>
+                </div>
+                <div class="footer-column">
+                    <a href="/admin" class="footer-link">ADMIN OFFICE</a>
+                    <div class="footer-year">EST. 2024</div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Tutorial Hint -->
+    <div id="tutorialHint" class="tutorial-hint">
+        <div class="tutorial-title">
+            <span>💡</span> PRO TIP
+        </div>
+        <div class="tutorial-text">
+            Click on any card to flip it and reveal more details! Switch modes to see who's dominating this week.
+        </div>
+        <button id="closeTutorialBtn" class="tutorial-close">Got it!</button>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="spinner-overlay" style="display: none;">
+        <div class="wordle-loader">
+            <div class="wordle-tile-loader">L</div>
+            <div class="wordle-tile-loader">O</div>
+            <div class="wordle-tile-loader">A</div>
+            <div class="wordle-tile-loader">D</div>
+            <div class="wordle-tile-loader">I</div>
+            <div class="wordle-tile-loader">N</div>
+            <div class="wordle-tile-loader">G</div>
+        </div>
+    </div>
+
+    <!-- Error Toast -->
+    <div id="errorToast" class="toast toast-error" style="display: none;">
+        <span id="errorMessage"></span>
+    </div>
+
+    <!-- Mobile Warning Overlay -->
+    <div id="mobileWarning" class="mobile-warning-overlay" style="display: none;">
+        <div class="mobile-warning-content">
+            <h2 class="mobile-warning-title">Desktop Only</h2>
+            <p class="mobile-warning-text">
+                The Wordle Chronicle is optimized for desktop viewing. The mobile experience may be degraded.
+            </p>
+            <button id="mobileWarningBtn" class="mobile-warning-btn">I Understand</button>
+        </div>
+    </div>
+
+    <script src="/js/version.js"></script>
+    <script src="/js/charts.js"></script>
+    <script src="/js/guest.js"></script>
+</body>
+
+</html>

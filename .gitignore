@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+
+# Database files
+data/*.db
+data/*.sqlite
+data/*.json
+data/*.db-*
+data/*.bak
+data/*.pre_*
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Generated content
+public/videos/
+server/frames_temp/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Brain
+.gemini/
+
+# Root-level test file (superseded by tests/test.js)
+/test.js
+
+# One-time migration/utility scripts — these may contain server-specific data
+# (Discord IDs, historical username aliases) and are not needed for general use.
+# If you need to run a migration, copy these from your local environment.
+scripts/migrate_wordle_db.cjs
+server/migrate_usernames.js
+server/check_current_users.js
+server/utils/check_aliases.js

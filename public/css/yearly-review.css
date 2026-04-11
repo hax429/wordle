@@ -1,0 +1,534 @@
+:root {
+    /* Exact match from styles.css where appropriate, plus premium 2025 vars */
+    --color-correct: #518D4E;
+    --color-present: #B69F3A;
+    --color-absent: #3a3a3c;
+    --color-background: #121213;
+    --color-surface: #1a1a1b;
+    --color-text: #ffffff;
+    --font-stack: 'Outfit', sans-serif;
+    --animation-speed: 0.6s;
+    --glass-bg: rgba(26, 26, 27, 0.8);
+    --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-stack);
+    background-color: var(--color-background);
+    color: var(--color-text);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    /* Subtle background pattern */
+    background-image:
+        radial-gradient(circle at 10% 20%, rgba(81, 141, 78, 0.1) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(182, 159, 58, 0.1) 0%, transparent 20%);
+}
+
+#app {
+    height: 100%;
+    width: 100%;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    /* Hide scrollbar Firefox */
+}
+
+#app::-webkit-scrollbar {
+    display: none;
+    /* Hide scrollbar Chrome/Safari */
+}
+
+.slide {
+    height: 100vh;
+    width: 100%;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* Typography & Titles */
+h1 {
+    font-size: 3.5rem;
+    text-transform: uppercase;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(45deg, #fff, #bbb);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+h2 {
+    font-size: 2.5rem;
+    color: var(--color-correct);
+    margin: 0;
+}
+
+h3 {
+    font-size: 1.5rem;
+    color: var(--color-present);
+    font-weight: 300;
+}
+
+.highlight {
+    color: var(--color-present);
+}
+
+/* Big Stats */
+.stat-big {
+    font-size: 6rem;
+    font-weight: 800;
+    line-height: 1;
+    margin: 20px 0;
+    color: var(--color-correct);
+    text-shadow: 0 0 30px rgba(81, 141, 78, 0.3);
+    /* Animation handled by JS or keyframes */
+}
+
+.stat-label {
+    font-size: 1.25rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+}
+
+/* User Selection Grid */
+.user-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 20px;
+    width: 100%;
+    max-width: 900px;
+    padding: 20px;
+    max-height: 60vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.user-card {
+    background: var(--color-surface);
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px solid var(--glass-border);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.user-card:hover {
+    border-color: var(--color-correct);
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    background: #252526;
+}
+
+.user-card h3 {
+    margin: 0;
+    color: #eee;
+    font-size: 1.2rem;
+}
+
+/* Animations using staggers */
+.animate-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.slide.active .animate-content>* {
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.slide.active .animate-content>*:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.slide.active .animate-content>*:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.slide.active .animate-content>*:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.slide.active .animate-content>*:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Guess Distribution Chart */
+.distribution-graph {
+    width: 100%;
+    max-width: 500px;
+    margin-top: 30px;
+}
+
+.graph-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    opacity: 0;
+    /* Hidden initially, handled by slide active */
+}
+
+.slide.active .graph-row {
+    animation: fadeInRight 0.6s ease forwards;
+}
+
+.slide.active .graph-row:nth-child(1) {
+    animation-delay: 0.4s;
+}
+
+.slide.active .graph-row:nth-child(2) {
+    animation-delay: 0.5s;
+}
+
+.slide.active .graph-row:nth-child(3) {
+    animation-delay: 0.6s;
+}
+
+.slide.active .graph-row:nth-child(4) {
+    animation-delay: 0.7s;
+}
+
+.slide.active .graph-row:nth-child(5) {
+    animation-delay: 0.8s;
+}
+
+.slide.active .graph-row:nth-child(6) {
+    animation-delay: 0.9s;
+}
+
+.slide.active .graph-row:nth-child(7) {
+    animation-delay: 1.0s;
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.graph-label {
+    width: 25px;
+    font-weight: 700;
+}
+
+.graph-bar-container {
+    flex-grow: 1;
+    height: 30px;
+    background: #272729;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-left: 10px;
+}
+
+.graph-bar {
+    height: 100%;
+    background: var(--color-absent);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 10px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    width: 0%;
+    /* JS animates this */
+    transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.graph-bar.winner {
+    background: var(--color-correct);
+    /* Subtle shimmer effect */
+    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.1) 75%, transparent 75%, transparent);
+    background-size: 20px 20px;
+}
+
+/* Buttons */
+.download-btn {
+    margin-top: 30px;
+    padding: 16px 32px;
+    font-size: 1.1rem;
+    font-family: var(--font-stack);
+    font-weight: bold;
+    letter-spacing: 1px;
+    background: white;
+    color: black;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+.download-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
+}
+
+/* Poster Preview */
+#poster-image {
+    max-width: 85%;
+    max-height: 50vh;
+    border-radius: 12px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    border: 1px solid #333;
+}
+
+/* Navigation Hint */
+.scroll-indicator {
+    position: fixed;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 2.5rem;
+    animation: float 2s infinite ease-in-out;
+    pointer-events: none;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translate(-50%, 0);
+        opacity: 0.3;
+    }
+
+    50% {
+        transform: translate(-50%, 10px);
+        opacity: 0.7;
+    }
+}
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    h2 {
+        font-size: 1.8rem;
+    }
+
+    h3 {
+        font-size: 1.2rem;
+    }
+
+    .stat-big {
+        font-size: 4rem !important;
+        margin: 10px 0;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+    }
+    
+    .slide {
+        padding: 10px;
+    }
+    
+    .graph-label {
+        width: 15px;
+        font-size: 0.8rem;
+    }
+
+    .user-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        padding: 10px;
+    }
+    
+    .user-card {
+        padding: 15px;
+    }
+    
+    .download-btn {
+        padding: 12px 24px;
+        font-size: 1rem;
+    }
+}
+
+/* Printer Animation Styles */
+.printer-container {
+    position: relative;
+    width: 100%;
+    max-width: 500px; /* Match poster width approx */
+    margin: 20px auto;
+    perspective: 1000px;
+}
+
+.printer-slot {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 110%;
+    height: 30px;
+    background: #2a2a2b;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5) inset, 0 2px 4px rgba(255,255,255,0.1);
+    z-index: 10;
+}
+
+.poster-wrapper {
+    position: relative;
+    width: 100%;
+    height: 50vh; /* Limit height for the effect */
+    overflow: hidden; /* Clips the invoice while it comes out */
+    border-radius: 12px;
+    /* Initial state: pushed up */
+    transform-origin: top center;
+    clip-path: inset(0 0 0 0);
+    z-index: 5;
+    touch-action: none; /* Prevent scroll while dragging */
+}
+
+#poster-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    cursor: grab;
+    /* Initial state for printer effect: hidden up */
+    transform: translateY(-85%); 
+    transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+#poster-image.dragging {
+    cursor: grabbing;
+    transition: none; /* No lag while dragging */
+}
+
+#poster-image.printed {
+    transform: translateY(0) !important;
+    cursor: default;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+
+.drag-hint {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+    color: rgba(255,255,255,0.5);
+    font-size: 0.9rem;
+    pointer-events: none;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); opacity: 0.5; }
+    50% { transform: translateY(10px); opacity: 0.8; }
+}
+
+/* Fix for stretched image: override previous max-height */
+#poster-image {
+    max-height: none !important;
+    object-fit: contain; /* Failsafe */
+}
+
+/* Allow full poster to be seen when printed */
+.poster-wrapper.printed {
+    height: auto !important;
+    overflow: visible !important;
+}
+
+/* Allow scrolling on slides if content overflows (e.g. mobile) */
+.slide {
+    overflow-y: auto !important; /* Override hidden */
+    height: 100vh; /* Keep height but allow scroll */
+}
+
+/* Ensure buttons are visible on mobile */
+#poster-buttons {
+    padding-bottom: 50px; /* Space for scrolling */
+}
+
+/* Enhanced Drag Hint */
+.drag-hint {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    background: rgba(0,0,0,0.3);
+    padding: 10px;
+    border-radius: 8px;
+    pointer-events: none;
+    z-index: 20;
+}
+
+/* AI Comment Slide */
+.typewriter-container {
+    max-width: 800px;
+    width: 90%;
+    margin: 0 auto;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.5rem;
+    line-height: 1.6;
+    color: #4af626; /* Unix Green */
+    text-shadow: 0 0 5px rgba(74, 246, 38, 0.5);
+    background: rgba(0, 0, 0, 0.9);
+    padding: 30px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    min-height: 200px;
+    position: relative;
+    text-align: left;
+    box-shadow: 0 0 20px rgba(74, 246, 38, 0.1);
+}
+
+.typewriter-cursor::after {
+    content: '▋';
+    animation: blink 1s step-end infinite;
+    color: #4af626;
+    margin-left: 2px;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.ai-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #333;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    border: 2px solid #4af626;
+    box-shadow: 0 0 10px #4af626;
+    margin-left: auto;
+    margin-right: auto;
+}
